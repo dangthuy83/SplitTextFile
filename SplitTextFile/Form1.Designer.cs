@@ -20,7 +20,7 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Windows Form Designer Split Text by Row
 
         /// <summary>
         ///  Required method for Designer support - do not modify
@@ -36,6 +36,8 @@
             this.BtnStop = new System.Windows.Forms.Button();
             this.BtnExit = new System.Windows.Forms.Button();
             this.BtnBrowser = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblPercent = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // TxtPath
@@ -114,11 +116,30 @@
             this.BtnBrowser.UseVisualStyleBackColor = true;
             this.BtnBrowser.Click += new System.EventHandler(this.BtnBrowser_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(49, 202);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(328, 29);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 7;
+            // 
+            // lblPercent
+            // 
+            this.lblPercent.AutoSize = true;
+            this.lblPercent.Location = new System.Drawing.Point(188, 179);
+            this.lblPercent.Name = "lblPercent";
+            this.lblPercent.Size = new System.Drawing.Size(50, 20);
+            this.lblPercent.TabIndex = 8;
+            this.lblPercent.Text = "label3";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(433, 183);
+            this.ClientSize = new System.Drawing.Size(433, 243);
+            this.Controls.Add(this.lblPercent);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.BtnBrowser);
             this.Controls.Add(this.BtnExit);
             this.Controls.Add(this.BtnStop);
@@ -127,9 +148,12 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.TxtSoLuong);
             this.Controls.Add(this.TxtPath);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Split Text File";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -145,5 +169,7 @@
         private Button BtnStop;
         private Button BtnExit;
         private Button BtnBrowser;
+        private ProgressBar progressBar1;
+        private Label lblPercent;
     }
 }
