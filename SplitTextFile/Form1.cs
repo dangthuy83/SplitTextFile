@@ -64,9 +64,16 @@ namespace SplitTextFile
 
         private void BtnStart_Click(object sender, EventArgs e)
         {
-            if(!_backgroundWorker.IsBusy)
+            if (TxtPath.Text == "" || TxtSoLuong.Text == "")
             {
-                _backgroundWorker.RunWorkerAsync();
+                _ = MessageBox.Show("VUI LÒNG CHỌN ĐƯỜNG DẪN ĐẾN FILE TEXT", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                if (!_backgroundWorker.IsBusy)
+                {
+                    _backgroundWorker.RunWorkerAsync();
+                }
             }
         }
 
@@ -88,6 +95,8 @@ namespace SplitTextFile
             using StreamReader reader = File.OpenText(TxtPath.Text);
             int outFileNumber = 1;
             int index = 1;
+            string[] lines = File.ReadAllLines(TxtPath.Text);
+            int cnt = lines.Count() / MaxRows;
             string savePath = Path.GetDirectoryName(TxtPath.Text) + "/" + "SPLIT_FILE_" + Path.GetFileNameWithoutExtension(TxtPath.Text);
             if(!Directory.Exists(savePath))
             {
@@ -101,7 +110,8 @@ namespace SplitTextFile
                 for (int i = 0; i < MaxRows; i++)
                 {
                     if (!_backgroundWorker.CancellationPending)
-                    {                        
+                    {
+                        //_backgroundWorker.ReportProgress(index++ * 100 / MaxRows);
                         writer.WriteLine(reader.ReadLine());
                         if (reader.EndOfStream)
                         {
