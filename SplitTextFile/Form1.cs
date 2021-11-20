@@ -6,7 +6,7 @@ namespace SplitTextFile
     public partial class Form1 : Form
     {
         private readonly BackgroundWorker _backgroundWorker = new();
-        private int GetMaxRows()
+        private int GetSLRows()
         {
             return int.Parse(TxtSoLuong.Text);
         }
@@ -17,28 +17,28 @@ namespace SplitTextFile
             _backgroundWorker.WorkerReportsProgress = true;
             _backgroundWorker.DoWork += BackgroundWorker_DoWork;
             _backgroundWorker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
-            _backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
+            //_backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             lblPercent.Text = "";
         }
-        private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
-        {
-            //progressBar1.Invoke(new Action(() => progressBar1.Value = 0));
-            progressBar1.Value = e.ProgressPercentage;
-            lblPercent.Text = String.Format("processing.....{0}%", e.ProgressPercentage);
-            lblPercent.Refresh();
-            progressBar1.Update();
-        }
+        //private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
+        //{
+        //    //progressBar1.Invoke(new Action(() => progressBar1.Value = 0));
+        //    progressBar1.Value = e.ProgressPercentage;
+        //    lblPercent.Text = String.Format("processing.....{0}%", e.ProgressPercentage);
+        //    lblPercent.Refresh();
+        //    progressBar1.Update();
+        //}
 
         private void BackgroundWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
             {
                 _ = MessageBox.Show("QUÁ TRÌNH CHIA FILE ĐÃ ĐƯỢC DỪNG LẠI");
-            }            
-            else
+            }
+            else if (e.Error != null)
             {
                 _ = MessageBox.Show("CHIA FILE THÀNH CÔNG");
             }
@@ -48,7 +48,7 @@ namespace SplitTextFile
         {
             try
             {
-                SplitbyRow(GetMaxRows());
+                SplitbyRow(GetSLRows());
             }
             catch (Exception ex)
             {
@@ -59,6 +59,7 @@ namespace SplitTextFile
 
         private void BtnBrowser_Click(object sender, EventArgs e)
         {
+            lblPercent.Text = "";
             Openfile();
         }
 
@@ -90,13 +91,13 @@ namespace SplitTextFile
             Close();
         }
 
-        private void SplitbyRow(int MaxRows)
+        private void SplitbyRow(int SLRows)
         {
             using StreamReader reader = File.OpenText(TxtPath.Text);
-            int outFileNumber = 1;
-            int index = 1;
             string[] lines = File.ReadAllLines(TxtPath.Text);
-            int cnt = lines.Count() / MaxRows;
+            int outFileNumber = 1;
+            int index = 1;            
+            int totalFile = lines.Length / SLRows;
             string savePath = Path.GetDirectoryName(TxtPath.Text) + "/" + "SPLIT_FILE_" + Path.GetFileNameWithoutExtension(TxtPath.Text);
             if(!Directory.Exists(savePath))
             {
@@ -104,10 +105,16 @@ namespace SplitTextFile
             }
             while (!reader.EndOfStream)
             {
-                string? outFileName = savePath + "/"+ Path.GetFileNameWithoutExtension(TxtPath.Text) + outFileNumber.ToString("D4") + Path.GetExtension(TxtPath.Text);
+                var outFileName = savePath + "/" + Path.GetFileNameWithoutExtension(TxtPath.Text) + "_" + outFileNumber.ToString(format: "D3") + Path.GetExtension(TxtPath.Text);
                 using StreamWriter writer = File.CreateText(string.Format(outFileName, outFileNumber++));
-                _backgroundWorker.ReportProgress(index++ * 100 / MaxRows);
-                for (int i = 0; i < MaxRows; i++)
+                progressBar1.Invoke(new Action(() =>
+                {
+                    progressBar1.Maximum = Convert.ToInt32(totalFile);
+                    lblPercent.Text = string.Format("Processing.....{0}/{1}", index++, totalFile);
+                    progressBar1.Increment(index);
+                }));
+                //_backgroundWorker.ReportProgress(index++ * 100 / MaxRows);
+                for (int i = 0; i < SLRows; i++)
                 {
                     if (!_backgroundWorker.CancellationPending)
                     {
