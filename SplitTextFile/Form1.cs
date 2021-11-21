@@ -31,7 +31,6 @@ namespace SplitTextFile
         //    lblPercent.Refresh();
         //    progressBar1.Update();
         //}
-
         private void BackgroundWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
@@ -43,7 +42,6 @@ namespace SplitTextFile
                 _ = MessageBox.Show("CHIA FILE THÀNH CÔNG");
             }
         }
-
         private void BackgroundWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
             try
@@ -56,13 +54,11 @@ namespace SplitTextFile
                 _ = MessageBox.Show("CHIA FILE KHÔNG THÀNH CÔNG" + Environment.NewLine + ex, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void BtnBrowser_Click(object sender, EventArgs e)
         {
             lblPercent.Text = "";
             Openfile();
         }
-
         private void BtnStart_Click(object sender, EventArgs e)
         {
             if (TxtPath.Text == "" || TxtSoLuong.Text == "")
@@ -77,7 +73,6 @@ namespace SplitTextFile
                 }
             }
         }
-
         private void BtnStop_Click(object sender, EventArgs e)
         {
             if (_backgroundWorker.IsBusy)
@@ -85,19 +80,30 @@ namespace SplitTextFile
                 _backgroundWorker.CancelAsync();
             }
         }
-
         private void BtnExit_Click(object sender, EventArgs e)
         {
             Close();
         }
-
+        private static int Lamtron(int sobichia, int sochia)
+        {
+            int kq;
+            if (sobichia % sochia != 0 )
+            {
+                kq = ((sobichia / sochia) + 1); 
+            }
+            else
+            {
+                kq = sobichia / sochia;
+            }
+            return kq;
+        }
         private void SplitbyRow(int SLRows)
         {
             using StreamReader reader = File.OpenText(TxtPath.Text);
             string[] lines = File.ReadAllLines(TxtPath.Text);
             int outFileNumber = 1;
-            int index = 1;            
-            int totalFile = lines.Length / SLRows;
+            int index = 1;
+            int totalFile = Lamtron(lines.Length, SLRows);
             string savePath = Path.GetDirectoryName(TxtPath.Text) + "/" + "SPLIT_FILE_" + Path.GetFileNameWithoutExtension(TxtPath.Text);
             if(!Directory.Exists(savePath))
             {
@@ -109,7 +115,7 @@ namespace SplitTextFile
                 using StreamWriter writer = File.CreateText(string.Format(outFileName, outFileNumber++));
                 progressBar1.Invoke(new Action(() =>
                 {
-                    progressBar1.Maximum = Convert.ToInt32(totalFile);
+                    progressBar1.Maximum = totalFile;
                     lblPercent.Text = string.Format("Processing.....{0}/{1}", index++, totalFile);
                     progressBar1.Increment(index);
                 }));
