@@ -14,7 +14,7 @@ namespace SplitTextFile
         {
             InitializeComponent();
             _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.WorkerReportsProgress = true;
+            //_backgroundWorker.WorkerReportsProgress = true;
             _backgroundWorker.DoWork += BackgroundWorker_DoWork;
             _backgroundWorker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
             //_backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
@@ -37,9 +37,16 @@ namespace SplitTextFile
             {
                 _ = MessageBox.Show("QUÁ TRÌNH CHIA FILE ĐÃ ĐƯỢC DỪNG LẠI");
             }
-            else if (e.Error != null)
+            else
             {
-                _ = MessageBox.Show("CHIA FILE THÀNH CÔNG");
+                if (_backgroundWorker.CancellationPending || e.Error != null)
+                {
+                    _ = MessageBox.Show("KHÔNG CHIA FILE THÀNH CÔNG");
+                }
+                else
+                {
+                    _ = MessageBox.Show("CHIA FILE THÀNH CÔNG");
+                }
             }
         }
         private void BackgroundWorker_DoWork(object? sender, DoWorkEventArgs e)
@@ -62,9 +69,13 @@ namespace SplitTextFile
         }
         private void BtnStart_Click(object sender, EventArgs e)
         {
-            if (TxtPath.Text == "" || TxtSoLuong.Text == "")
+            if (TxtPath.Text == "")
             {
                 _ = MessageBox.Show("VUI LÒNG CHỌN ĐƯỜNG DẪN ĐẾN FILE TEXT", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if(TxtSoLuong.Text == "")
+            {
+                _ = MessageBox.Show("VUI LÒNG NHẬP SỐ LƯỢNG BẢN GHI TRONG 1 FILE", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -144,6 +155,14 @@ namespace SplitTextFile
             {
                 TxtPath.Text = openFileDialog.FileName;
             }
-        }        
+        }
+
+        private void TxtSoLuong_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
     }
 }
